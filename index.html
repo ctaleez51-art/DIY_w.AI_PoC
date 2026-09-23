@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>간편장부</title>
+<link rel="stylesheet" href="styles.css?v=29">
+</head>
+<body>
+<main>
+  <h1>간편장부</h1>
+
+  <!-- 로그인 전에 보이는 것 -->
+  <section id="loggedOut">
+    <form id="authForm">
+      <input id="email" type="email" placeholder="이메일" autocomplete="email" required>
+      <input id="password" type="password" placeholder="비밀번호" autocomplete="current-password" required>
+      <button id="loginBtn" type="submit">로그인</button>
+      <button id="signupBtn" type="button">회원가입</button>
+    </form>
+  </section>
+
+  <!-- 로그인 후에 보이는 것 -->
+  <section id="loggedIn" hidden>
+   <div id="setup">
+    <p id="who"></p>
+    <button id="logoutBtn" type="button">로그아웃</button>
+
+    <!-- 개인정보 -->
+    <h2>개인정보</h2>
+    <form id="profileForm" class="칸모음">
+      <label>성명 <input id="pName" type="text" required></label>
+      <label>주민등록번호 <input id="pRrn" type="text" required></label>
+      <label>주소 <input id="pAddress" type="text" required></label>
+      <label>일반전화 <input id="pPhoneHome" type="tel"></label>
+      <label>휴대전화 <input id="pPhoneMobile" type="tel"></label>
+      <label>기장의무
+        <select id="pBookDuty" required>
+          <option value=""></option>
+          <option>복식부기의무자</option>
+          <option>간편장부대상자</option>
+          <option>비사업자</option>
+        </select>
+      </label>
+      <label>신고유형
+        <select id="pReportType" required>
+          <option value=""></option>
+          <option>자기조정</option>
+          <option>외부조정</option>
+          <option>성실납세</option>
+          <option>성실신고확인</option>
+          <option>간편장부</option>
+          <option>추계-기준율</option>
+          <option>추계-단순율</option>
+          <option>분리과세</option>
+          <option>비사업자</option>
+        </select>
+      </label>
+      <label>신고구분
+        <select id="pReportKind" required>
+          <option value=""></option>
+          <option>정기신고</option>
+          <option>수정신고</option>
+          <option>기한후신고</option>
+          <option>경정청구</option>
+          <option>추가신고(인정상여)</option>
+        </select>
+      </label>
+      <label>관할세무서 <input id="pTaxOffice" type="text"></label>
+      <label>관할지자체 <input id="pLocalGov" type="text"></label>
+
+      <button type="submit">저장</button>
+    </form>
+
+    <!-- 사업장 -->
+    <h2>사업장</h2>
+
+    <form id="bizForm" class="칸모음">
+      <label>과세유형
+        <select id="taxType" required>
+          <option value=""></option>
+          <option>일반과세자</option>
+          <option>간이과세자</option>
+          <option>면세사업자</option>
+        </select>
+      </label>
+      <label>등록번호 <input id="bizNo" type="text" required></label>
+      <label>상호 <input id="bizName" type="text" required></label>
+      <label>성명 <input id="ownerName" type="text" required></label>
+      <label>개업 연월일 <input id="openedOn" type="date" required></label>
+      <label>사업장 소재지 <input id="address" type="text" required></label>
+
+      <fieldset>
+        <legend>사업의 종류</legend>
+        <div id="industryRows"></div>
+        <button id="addIndustry" type="button">줄 추가</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>공동사업자</legend>
+        <label class="한줄"><input type="radio" name="coOwners" value="예" required> 예</label>
+        <label class="한줄"><input type="radio" name="coOwners" value="아니오"> 아니오</label>
+      </fieldset>
+      <fieldset>
+        <legend>사업자 단위 과세 적용사업자</legend>
+        <label class="한줄"><input type="radio" name="unitTax" value="예" required> 예</label>
+        <label class="한줄"><input type="radio" name="unitTax" value="아니오"> 아니오</label>
+      </fieldset>
+
+      <div class="폼버튼">
+        <button id="saveBiz" type="submit">등록</button>
+        <button id="cancelEdit" type="button" hidden>취소</button>
+      </div>
+    </form>
+
+    <h3>등록한 사업장</h3>
+    <div id="bizList"></div>
+
+    <!-- 간편장부 — 고른 사업장에 대한 파일을 받는 자리 -->
+    <div id="ledger" hidden>
+      <h2 id="ledgerTitle"></h2>
+
+      <!-- 브라우저가 그려주는 파일 칸은 글자를 바꿀 수 없어서 감추고,
+           우리 버튼을 눌러 그 칸을 대신 연다 -->
+      <div class="올리기">
+        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" multiple hidden>
+        <button id="uploadBtn" type="button">파일 업로드</button>
+        <button id="viewLedgerBtn" type="button">장부보기</button>
+      </div>
+
+    </div>
+   </div>
+
+   <!-- 파일을 올리면 이 화면만 남는다 -->
+   <div id="ledgerScreen" hidden>
+     <h2 id="ledgerScreenTitle"></h2>
+
+     <!-- 뒤로 · 삭제 · 저장 — 왼쪽 위에 이 순서로. 잘못 누르지 않게 간격을 넓게 둔다 -->
+     <div class="장부버튼">
+       <button id="backBtn" type="button">뒤로</button>
+       <button id="deleteBtn" type="button">삭제</button>
+       <button id="saveLedgerBtn" type="button">저장</button>
+     </div>
+
+     <!-- 읽은 내용을 간편장부 서식으로 옮겨 그린다 -->
+     <div id="ledgerTable"></div>
+
+     <!-- 삭제를 누르면 바로 빼지 않고 한 번 묻는다.
+          표가 길어서 아래에 두면 안 보인다. 화면 가운데에 띄운다 -->
+     <div id="confirmRemove" class="확인창" hidden>
+       <div class="확인창속">
+         <p class="확인글">삭제할까요?</p>
+         <div class="확인버튼">
+           <button id="confirmYes" type="button">확인</button>
+           <button id="confirmNo" type="button">취소</button>
+         </div>
+       </div>
+     </div>
+   </div>
+  </section>
+
+  <p id="msg"></p>
+</main>
+
+<script type="module" src="script.js?v=29"></script>
+</body>
+</html>

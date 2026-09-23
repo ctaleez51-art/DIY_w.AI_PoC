@@ -1,0 +1,338 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  font-family: "Malgun Gothic", system-ui, sans-serif;
+  line-height: 1.7;
+  background: #fafaf8;
+  color: #222;
+}
+
+main {
+  width: 100%;
+  max-width: 30rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 2rem;
+}
+
+form {
+  display: grid;
+  gap: .5rem;
+}
+
+input {
+  padding: .6rem .7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+button {
+  padding: .6rem;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #333;
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#signupBtn {
+  background: #fff;
+  color: #333;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+#who {
+  margin: 0 0 1rem;
+}
+
+#msg {
+  margin: 1rem 0 0;
+  font-size: .9rem;
+  color: #666;
+  min-height: 1.5rem;
+}
+
+/* 로그인 후 화면 — 칸이 많아서 왼쪽 맞춤으로 둔다 */
+h2 {
+  font-size: 1.1rem;
+  margin: 2rem 0 .7rem;
+  padding-bottom: .3rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+h3 {
+  font-size: 1rem;
+  margin: 1.5rem 0 .5rem;
+  text-align: left;
+}
+
+.칸모음 {
+  display: grid;
+  gap: .6rem;
+  text-align: left;
+  font-size: .9rem;
+}
+
+.칸모음 label {
+  display: grid;
+  gap: .2rem;
+}
+
+.칸모음 label.한줄 {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+select {
+  padding: .6rem .7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fff;
+}
+
+fieldset {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: .7rem;
+  display: grid;
+  gap: .5rem;
+}
+
+legend {
+  font-size: .9rem;
+  padding: 0 .3rem;
+}
+
+.업종줄 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .4rem;
+  margin-bottom: .4rem;
+}
+
+#addIndustry {
+  background: #fff;
+  color: #333;
+  padding: .4rem;
+  font-size: .85rem;
+}
+
+.사업장줄 {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  text-align: left;
+  padding: .5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+#bizList {
+  text-align: left;
+  font-size: .9rem;
+}
+
+.폼버튼 {
+  display: grid;
+  gap: .4rem;
+}
+
+#cancelEdit {
+  background: #fff;
+  color: #333;
+}
+
+.사업장줄 label {
+  flex: 1;
+}
+
+.작은버튼 {
+  padding: .3rem .6rem;
+  font-size: .8rem;
+  background: #fff;
+  color: #333;
+  border-color: #bbb;
+}
+
+/* 긴 보기(예: "추가신고(인정상여)")가 있는 select 때문에
+   칸이 화면 밖으로 밀리는 것을 막는다 */
+.칸모음,
+.폼버튼 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.업종줄 {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+input,
+select,
+button {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* 안내 문구는 페이지가 길어져도 늘 보이도록 화면에 띄운다.
+   가운데 아래에 두었더니 버튼을 가려서 오른쪽 아래 구석으로 옮겼다.
+   본문은 가운데에 있으므로 이 자리는 대체로 비어 있다 */
+#msg {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  margin: 0;
+  padding: .5rem .9rem;
+  max-width: 22rem;
+  border-radius: 6px;
+  background: #333;
+  color: #fff;
+  min-height: 0;
+  pointer-events: none;   /* 문구가 떠 있어도 아래 칸을 누를 수 있게 한다 */
+}
+
+#msg:empty {
+  display: none;
+}
+
+/* 파일 올리는 줄 — 버튼과 고른 파일 이름을 나란히 둔다 */
+.올리기 {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-align: left;
+  margin-top: .5rem;
+}
+
+#uploadBtn {
+  flex: none;
+}
+
+#fileName {
+  font-size: .9rem;
+  color: #666;
+  overflow-wrap: anywhere;
+}
+
+/* 간편장부 표 — 열이 11개라 본문 폭(30rem)에 안 들어간다.
+   전에는 이 칸에 음수 마진을 줘서 창 전체 폭으로 넓혔는데,
+   그 50% 가 본문 기준이라 표가 본문 밖으로 삐져나왔고
+   그만큼 문서 폭이 늘어나 본문이 오른쪽으로 밀렸다.
+   그래서 표를 밀어내는 대신, 장부 화면일 때만 본문 폭 제한을 푼다.
+   (body.장부중 은 script.js 의 장부화면으로() 가 붙인다) */
+body.장부중 main {
+  max-width: none;
+}
+
+/* 뒤로 · 삭제 · 저장 — 제목 바로 밑, 왼쪽에 나란히.
+   main 이 가운데 맞춤이라 flex-start 로 왼쪽에 붙인다.
+   gap 2rem 은 잘못 누르지 않게 넉넉히 벌린 것이다 */
+.장부버튼 {
+  display: flex;
+  justify-content: flex-start;
+  gap: 2rem;
+  margin: 0 0 1rem;
+}
+
+#ledgerTable {
+  width: 100%;
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.장부표 {
+  border-collapse: collapse;
+  font-size: .8rem;
+  white-space: nowrap;
+}
+
+.장부표 th,
+.장부표 td {
+  border: 1px solid #ccc;
+  padding: .3rem .5rem;
+  text-align: left;
+}
+
+.장부표 th {
+  background: #fffbe6;
+  text-align: center;
+  font-weight: normal;
+}
+
+.장부표 td.숫자 {
+  text-align: right;
+}
+
+/* 기준 연도가 아닌 줄 */
+.장부표 tr.다른연도 td {
+  background: #fdeeee;
+}
+
+.장부표 td:first-child,
+.장부표 th:first-child {
+  text-align: center;
+}
+
+/* 삭제 전에 한 번 묻는 창.
+   표가 길어서 페이지 안에 두면 화면 밖으로 밀린다.
+   그래서 화면에 고정해서 가운데에 띄우고 뒤를 어둡게 덮는다.
+   [hidden] 과 우선순위가 같아 감추기가 먹지 않으므로 따로 적어준다 */
+.확인창[hidden] {
+  display: none;
+}
+
+.확인창 {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .4);
+  z-index: 10;
+}
+
+.확인창속 {
+  background: #fff;
+  border-radius: .5rem;
+  padding: 1.8rem 2rem 1.4rem;
+  min-width: 16rem;
+  text-align: center;
+  box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .25);
+}
+
+.확인글 {
+  margin: 0 0 1.4rem;
+  font-size: 1rem;
+}
+
+/* 확인과 취소도 잘못 누르지 않게 벌려 둔다 */
+.확인버튼 {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+#confirmNo {
+  background: #fff;
+  color: #333;
+}
