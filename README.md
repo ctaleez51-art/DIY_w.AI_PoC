@@ -110,11 +110,6 @@ Start-Process python -ArgumentList "받아적기.py" -WindowStyle Hidden -Redire
 | 젬마 쪽에서 CORS 오류 (403) | 1번의 `setx` 를 안 했거나, 하고 나서 Ollama 를 안 껐다 켰다. **`setx` 는 껐다 켠 뒤부터 먹는다** |
 | 마이크가 안 켜진다 | 크롬 주소창 왼쪽 자물쇠에서 마이크를 허용한다 |
 
-### ⚠️ 남의 컴퓨터에서는 🎤 가 안 된다
-
-주소는 누구나 열리지만, 그 사람 컴퓨터에는 받아적기도 젬마도 없다.
-**이 구조는 파는 물건이 아니다.** 팔려면 둘을 실행파일 하나에 같이 묶어야 한다.
-
 ---
 
 ## 정한 규칙
@@ -141,7 +136,6 @@ Start-Process python -ArgumentList "받아적기.py" -WindowStyle Hidden -Redire
 | `script.js` | 녹음 → 받아적기 → 젬마 → 장부 줄. 맨 아래 `말로 넣기` 절 |
 | `styles.css` | 모양 |
 | `sql/` | Supabase 표. **이번 과제에서 바꾼 것은 없다** |
-| `colab.ipynb` | **안 쓴다.** 코랩으로 하던 때의 것이라 남겨만 뒀다 |
 | `문제정의서.md` `모델선정근거.md` `검증.md` | 제출 문서 |
 
 ---
