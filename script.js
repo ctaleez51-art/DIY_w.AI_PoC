@@ -994,3 +994,172 @@ saveLedgerBtn.addEventListener("click", async () => {
     ? "저장한 장부를 비웠습니다."
     : `${넣을것.length}건을 저장했습니다.`);
 });
+
+
+// ============================================================
+// 말로 넣기 — 소리 → Whisper(받아적기) → 젬마(칸 나누기) → 장부 한 줄
+// 받아적기와 칸 나누기는 코랩 노트북(colab.ipynb)에서 돈다.
+// 코랩 주소는 켤 때마다 바뀌므로 화면에서 받아 기억해둔다.
+// ============================================================
+
+const aiUrl    = document.getElementById("aiUrl");
+const micState = document.getElementById("micState");
+const 말단추들  = [document.getElementById("micBtn"), document.getElementById("micBtn2")];
+
+aiUrl.value = localStorage.getItem("AI주소") ?? "";
+aiUrl.addEventListener("change", () => {
+  const 주소 = 주소다듬기(aiUrl.value);
+  aiUrl.value = 주소;
+  localStorage.setItem("AI주소", 주소);
+});
+
+// 끝의 빗금은 떼어둔다. 붙여넣을 때 흔히 따라온다.
+function 주소다듬기(값) {
+  return String(값 ?? "").trim().replace(/\/+$/, "");
+}
+
+function 말상태(글, 빠짐 = false) {
+  micState.textContent = 글;
+  micState.classList.toggle("빠짐", 빠짐);
+  if (글) say(글);
+}
+
+function 말단추글(글, 듣는중 = false) {
+  for (const 단추 of 말단추들) {
+    단추.textContent = 글;
+    단추.classList.toggle("듣는중", 듣는중);
+  }
+}
+
+function 말단추잠금(잠글까) {
+  for (const 단추 of 말단추들) 단추.disabled = 잠글까;
+}
+
+function 오늘날짜() {
+  const 두자리 = (수) => String(수).padStart(2, "0");
+  const 지금 = new Date();
+  return `${지금.getFullYear()}-${두자리(지금.getMonth() + 1)}-${두자리(지금.getDate())}`;
+}
+
+let 녹음기 = null;
+let 소리조각 = [];
+
+for (const 단추 of 말단추들) 단추.addEventListener("click", 녹음토글);
+
+// 한 번 누르면 듣기 시작, 다시 누르면 멈추고 보낸다
+async function 녹음토글() {
+  if (녹음기 && 녹음기.state === "recording") {
+    녹음기.stop();
+    return;
+  }
+
+  const 사업장 = 사업장들.find((하나) => 하나.id === 고른사업장);
+  if (!사업장) {
+    말상태("먼저 사업장을 고르세요.", true);
+    return;
+  }
+
+  const 주소 = 주소다듬기(aiUrl.value);
+  if (!주소) {
+    말상태("AI 주소를 먼저 넣어주세요. 코랩 노트북 맨 아래 칸에 나옵니다.", true);
+    return;
+  }
+  localStorage.setItem("AI주소", 주소);
+
+  if (!navigator.mediaDevices || typeof MediaRecorder === "undefined") {
+    말상태("이 브라우저는 녹음을 못 합니다. 크롬에서 열어주세요.", true);
+    return;
+  }
+
+  let 소리길;
+  try {
+    소리길 = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch {
+    말상태("마이크를 쓸 수 없습니다. 브라우저에서 마이크를 허용해주세요.", true);
+    return;
+  }
+
+  소리조각 = [];
+  녹음기 = new MediaRecorder(소리길);
+  녹음기.addEventListener("dataavailable", (조각) => {
+    if (조각.data.size > 0) 소리조각.push(조각.data);
+  });
+  녹음기.addEventListener("stop", async () => {
+    for (const 갈래 of 소리길.getTracks()) 갈래.stop();
+    말단추글("🎤 말하기");
+    await 소리보내기(new Blob(소리조각, { type: 녹음기.mimeType }), 주소, 사업장);
+  });
+
+  녹음기.start();
+  말단추글("■ 다 말했어요", true);
+  말상태("듣고 있습니다. 다 말하면 버튼을 다시 누르세요.");
+}
+
+// 소리를 코랩으로 보내고, 돌아온 장부 줄을 화면에 넣는다
+async function 소리보내기(소리, 주소, 사업장) {
+  말단추잠금(true);
+  말상태("알아듣는 중입니다…");
+
+  let 답;
+  try {
+    const 짐 = new FormData();
+    짐.append("audio", 소리, "말.webm");
+    짐.append("today", 오늘날짜());
+
+    const 응답 = await fetch(`${주소}/voice`, { method: "POST", body: 짐 });
+    if (!응답.ok) throw new Error(String(응답.status));
+    답 = await 응답.json();
+  } catch {
+    말단추잠금(false);
+    말상태("AI 서버에 닿지 않습니다. 코랩 노트북이 켜져 있는지 보세요.", true);
+    return;
+  }
+  말단추잠금(false);
+
+  if (!답.줄) {
+    말상태("아무 말도 들리지 않았습니다. 다시 말해주세요.", true);
+    return;
+  }
+
+  // 꼭 있어야 하는 칸(날짜·무엇을·얼마)이 비면 장부에 넣지 않는다.
+  // 반쪽짜리 줄이 쌓이는 것보다 다시 말하는 편이 낫다.
+  if (답.빠진칸?.length > 0) {
+    말상태(`들은 말 “${답.텍스트}” — ${답.빠진칸.join(", ")}을(를) 말하지 않았습니다. 다시 말해주세요.`, true);
+    return;
+  }
+
+  // 저장해둔 장부를 아직 안 꺼냈으면 먼저 꺼내온다.
+  // 저장은 '화면에 보이는 것과 똑같이 맞추는' 방식이라, 안 꺼내고 저장하면 예전 줄이 날아간다.
+  if (장부.length === 0) await 저장한장부불러오기(사업장);
+
+  장부.push(장부줄모양(답.줄));
+  날짜순으로();
+  장부그리기();
+  장부화면으로();
+
+  말상태(`들은 말 “${답.텍스트}” — 장부에 넣었습니다. [저장]을 눌러야 남습니다.`);
+}
+
+// 코랩이 보낸 줄을 화면이 쓰는 모양으로 맞춘다.
+// 빠진 칸은 빈 칸으로 채우고, 금액 칸은 숫자로 만든다.
+function 장부줄모양(줄) {
+  const 값 = (이름) => 줄?.[이름] ?? "";
+  const 돈 = (이름) => {
+    const 수 = 숫자로(값(이름));
+    return 수 === "" ? "" : 수;
+  };
+
+  return {
+    일자:       글자(값("일자")),
+    계정과목:   글자(값("계정과목")),
+    거래내용:   글자(값("거래내용")),
+    거래처:     글자(값("거래처")),
+    수입금액:   돈("수입금액"),
+    수입부가세: 돈("수입부가세"),
+    비용금액:   돈("비용금액"),
+    비용부가세: 돈("비용부가세"),
+    자산금액:   돈("자산금액"),
+    자산부가세: 돈("자산부가세"),
+    비고:       글자(값("비고")) || "말",
+  };
+}

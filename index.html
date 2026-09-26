@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>간편장부</title>
-<link rel="stylesheet" href="styles.css?v=29">
+<link rel="stylesheet" href="styles.css?v=30">
 </head>
 <body>
 <main>
@@ -128,6 +128,16 @@
         <button id="viewLedgerBtn" type="button">장부보기</button>
       </div>
 
+      <!-- 말로 넣기 — 소리를 코랩 서버로 보내 장부 한 줄로 받아온다.
+           코랩 주소는 노트북을 켤 때마다 바뀌므로 칸으로 받는다 -->
+      <div class="말하기">
+        <label class="AI주소칸">AI 주소
+          <input id="aiUrl" type="url" placeholder="https://○○○.trycloudflare.com">
+        </label>
+        <button id="micBtn" type="button" class="말단추">🎤 말하기</button>
+        <p id="micState" class="말상태"></p>
+      </div>
+
     </div>
    </div>
 
@@ -140,6 +150,7 @@
        <button id="backBtn" type="button">뒤로</button>
        <button id="deleteBtn" type="button">삭제</button>
        <button id="saveLedgerBtn" type="button">저장</button>
+       <button id="micBtn2" type="button" class="말단추">🎤 말하기</button>
      </div>
 
      <!-- 읽은 내용을 간편장부 서식으로 옮겨 그린다 -->
@@ -162,6 +173,6 @@
   <p id="msg"></p>
 </main>
 
-<script type="module" src="script.js?v=29"></script>
+<script type="module" src="script.js?v=30"></script>
 </body>
 </html>
