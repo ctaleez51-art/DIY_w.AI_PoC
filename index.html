@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>간편장부</title>
-<link rel="stylesheet" href="styles.css?v=31">
+<link rel="stylesheet" href="styles.css?v=32">
 </head>
 <body>
 <main>
@@ -128,21 +128,6 @@
         <button id="viewLedgerBtn" type="button">장부보기</button>
       </div>
 
-      <!-- 말로 넣기 — 소리를 코랩 서버로 보내 장부 한 줄로 받아온다.
-           코랩 주소는 노트북을 켤 때마다 바뀌므로 칸으로 받는다 -->
-      <div class="말하기">
-        <!-- 받아적기는 코랩(GPU)에서, 칸 나누기는 내 컴퓨터의 Ollama 에서 한다.
-             코랩 주소는 노트북을 켤 때마다 바뀌므로 칸으로 받는다 -->
-        <label class="AI주소칸">받아적기 주소 <small>(코랩 노트북 맨 아래에 나옵니다)</small>
-          <input id="sttUrl" type="url" placeholder="https://○○○.trycloudflare.com">
-        </label>
-        <label class="AI주소칸">젬마 주소 <small>(내 컴퓨터의 Ollama. 그대로 두면 됩니다)</small>
-          <input id="llmUrl" type="url" placeholder="http://127.0.0.1:11434">
-        </label>
-        <button id="micBtn" type="button" class="말단추">🎤 말하기</button>
-        <p id="micState" class="말상태"></p>
-      </div>
-
     </div>
    </div>
 
@@ -157,6 +142,9 @@
        <button id="saveLedgerBtn" type="button">저장</button>
        <button id="micBtn2" type="button" class="말단추">🎤 말하기</button>
      </div>
+
+     <!-- 말로 넣을 때 지금 어디까지 왔는지 알리는 자리 -->
+     <p id="micState" class="말상태"></p>
 
      <!-- 읽은 내용을 간편장부 서식으로 옮겨 그린다 -->
      <div id="ledgerTable"></div>
@@ -178,6 +166,6 @@
   <p id="msg"></p>
 </main>
 
-<script type="module" src="script.js?v=31"></script>
+<script type="module" src="script.js?v=35"></script>
 </body>
 </html>
