@@ -10,7 +10,7 @@
 
 ## 🎬 시연 영상
 
-**https://youtu.be/XvQzoYIgii8**
+**https://youtu.be/yZNApC2F7Dk**
 
 ---
 
